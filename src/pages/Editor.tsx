@@ -16,6 +16,23 @@ export default function Editor() {
   const [selectedPreset, setSelectedPreset] = useState<PresetType | null>(null);
   const [showAfter, setShowAfter] = useState(false);
 
+  const applyEnhancement = useCallback(async (preset: PresetType) => {
+    if (!originalImage) return;
+    setIsLoading(true);
+    setSelectedPreset(preset);
+    try {
+      await new Promise(r => setTimeout(r, 800));
+      const result = await enhanceImage(originalImage, preset);
+      setEnhancedImage(result);
+      setShowAfter(true);
+      toast.success('Photo enhanced!');
+    } catch {
+      toast.error('Enhancement failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [originalImage]);
+
   if (!originalImage) {
     navigate('/');
     return null;
